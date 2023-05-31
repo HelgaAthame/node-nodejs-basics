@@ -5,15 +5,17 @@ import { fileURLToPath } from 'url';
 
 const cores = os.cpus().length;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 let arr = [];
 
 const performCalculations = async () => {
 
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-
   for (let i = 0; i < cores; i += 1) {
-    arr.push(new Worker(path.join(__dirname, 'worker.js')));
+    arr.push(new Worker(path.join(__dirname, 'worker.js'), {
+      workerData: i + 10
+    }));
     arr[i].postMessage(i + 10);
     arr[i].on('message', (message) => {
       arr[i] = {status: 'resolved', data: message};

@@ -22,11 +22,6 @@ const copy = async () => {
 
   await fsPromises.mkdir(path.join(__dirname, 'files_copy'), { recursive: true });
 
-  /*const filesCopied = await fsPromises.readdir(path.join(__dirname, 'files-copy'), { withFileTypes: true });
-  for (let fileCopied of filesCopied) {
-    await fsPromises.unlink(path.join(__dirname, 'files-copy', fileCopied.name));
-  }*/
-
   const files = await fsPromises.readdir(path.join(__dirname, 'files'), { withFileTypes: true });
 
   for (let file of files) {

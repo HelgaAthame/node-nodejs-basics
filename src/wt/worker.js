@@ -1,14 +1,10 @@
-import { parentPort, MessagePort } from 'worker_threads';
+import { parentPort, workerData } from 'worker_threads';
 // n should be received from main thread
 const nthFibonacci = (n) => n < 2 ? n : nthFibonacci(n - 1) + nthFibonacci(n - 2);
 
-const sendResult = (x) => {
-  parentPort.postMessage(x);
+const sendResult = () => {
+  const result = nthFibonacci(workerData);
+  parentPort.postMessage(result);
 };
 
-parentPort.on('message', async (message) => {
-  const result = await nthFibonacci(message);
-  sendResult(result);
-});
-
-//sendResult();
+sendResult();

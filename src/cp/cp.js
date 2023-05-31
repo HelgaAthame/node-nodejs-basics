@@ -1,13 +1,13 @@
-const { stdin, stdout } = process;
-import child_process from 'child_process';
+import { fork } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const spawnChildProcess = async (args) => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
+  const filePath = path.join(__dirname, 'files', 'script.js');
 
-  const child = child_process.fork(path.join(__dirname, 'files', 'script.js'),args);
+  const child = fork(filePath, args);
   child.send(args);
 
   child.on('message', (code) => {

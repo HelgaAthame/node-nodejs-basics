@@ -6,7 +6,7 @@ import * as stream from 'stream';
 const read = async () => {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  const { stdin, stdout } = process;
+  const { stdout } = process;
   const readable = new stream.Readable({
     read(size) {
       const that = this;
@@ -17,7 +17,7 @@ const read = async () => {
       });
     }
   });
-  readable.pipe(process.stdout);
+  readable.pipe(stdout);
 };
 
 await read();
