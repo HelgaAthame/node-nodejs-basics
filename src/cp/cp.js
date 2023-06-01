@@ -1,23 +1,21 @@
 import { fork } from 'child_process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+const { stdin, stdout } = process;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const filePath = path.join(__dirname, 'files', 'script.js');
 
 const spawnChildProcess = async (args) => {
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-  const filePath = path.join(__dirname, 'files', 'script.js');
-
-  const child = fork(filePath, args);
-  child.send(args);
-
-  child.on('message', (code) => {
-    console.log(`Message to parent: `);
-    for (let key in code) {
-      console.log(`${key} = ${code[key]}`);
-    }
-      process.exit(0);
-  });
-
+  const child = fork(filePath, args, { silent: true });
+  stdin.pipe(child.stdin);
+  child.stdout.pipe(stdout);
 };
 
-spawnChildProcess(process.argv.slice(2));
+const arg1 = 12345;
+const arg2 = 'some argument';
+const arg3 = true;
+
+// Put your arguments in function call to test this functionality
+spawnChildProcess([arg1, arg2, arg3]);
