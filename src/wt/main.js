@@ -8,29 +8,30 @@ const cores = os.cpus().length;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let arr = [];
+let workerArr = [];
+let resArr = [];
 
 const performCalculations = async () => {
 
   for (let i = 0; i < cores; i += 1) {
-    arr.push(new Worker(path.join(__dirname, 'worker.js'), {
+    workerArr.push(new Worker(path.join(__dirname, 'worker.js'), {
       workerData: i + 10
     }));
-    arr[i].postMessage(i + 10);
-    arr[i].on('message', (message) => {
-      arr[i] = {status: 'resolved', data: message};
-      if (i == arr.length - 1) {
-        console.log(arr);
+    workerArr[i].postMessage(i + 10);
+    workerArr[i].on('message', (message) => {
+      resArr.push({status: 'resolved', data: message});
+      workerArr[i] = {status: 'resolved', data: message};
+    });
+    workerArr[i].on('error', () => {
+      resArr.push({status: 'error', data: null});
+      workerArr[i] = {status: 'error', data: null};
+    });
+    workerArr[i].on("exit", () => {
+      if (resArr.length === cores) {
+        console.log(workerArr);
         process.exit();
       }
-    });
-    arr[i].on('error', () => {
-      arr[i] = {status: 'error', data: null};
-      if (i == arr.length - 1) {
-        console.log(arr);
-        process.exit();
-      }
-    });
+   });
   }
 };
 
